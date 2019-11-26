@@ -13,7 +13,7 @@ Da jeg ikke havde nok til at eksperimentere med den udleverede ESP8266, så valg
 
 ### Demonstration
 - Resultat:
-![](/ressources/Demo.gif)
+![](https://github.com/digitalInteraktion2019/IOTresources/blob/master/Emils-ImageBalling/Ressourcer/Demo.gif)
 
 ### Utilities
 - Visual Studio 2019
