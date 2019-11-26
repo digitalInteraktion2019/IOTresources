@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Zilla+Slab&display=swap');
+        body {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: top
+            min-height: 100vh;
+            font-family: 'Zilla Slab', serif;
+            font-size: 4em;
+            background: #efefef;
+            letter-spacing: -1px;
+        }
+
+        html, body {
+		  width:  100%;
+		  height: 100%;
+		  margin: 0;
+		}
+        
+        quote::before {
+            content: '\201C';
+        }
+        
+        quote::after {
+            content: '\201D';
+        }
+        
+        ins {
+            color: rgba(86, 175, 155, .75);
+            cursor: help;
+            position: relative;
+        }
+        
+        ins::before {
+            content: '(correction)';
+            display: block;
+            pointer-events: none;
+            position: absolute;
+            color: #659b82;
+            top: -2em;
+            left: 0;
+            font-size: .5em;
+            opacity: 0;
+            transition: .5s ease;
+        }
+        
+        ins:hover del {
+            max-width: 9em;
+        }
+        
+        ins:hover::before {
+            opacity: 1;
+            top: -1.2em;
+        }
+        
+        ins del {
+            color: rgba(255, 107, 107, .75);
+            display: inline-block;
+            overflow: hidden;
+            max-width: 0;
+            vertical-align: bottom;
+            transition: .5s ease;
+        }
+        
+        ins del::before {
+            content: '\00a0';
+            visibility: hidden;
+        }
+
+    </style>
+</head>
+
+<body onLoad="init();">
+    <div>
+        <p class="sleep" >Emils IOT-P<span class="sleep__letters"><sup>Z</sup><sub>Z</sub><sup>Z</sup></span>roject...</p>
+    </div>
+
+    <canvas id="myCanvas" width="600" height="450" style="position:absolute; bottom:75px; border:1px solid #000000; z-index:3"></canvas>
+
+</body>
+
+</html>
+
+<script> 
+	var context;
+	var x=100;
+	var y=200;
+	var dx=5;
+	var dy=5;
+
+	var canvasX = 600;
+	var canvasY = 450;
+
+	var imglink = "http://www.edoganci.dk/" + document.title;
+
+	var actualImg = new Image();
+	var pattern;
+
+	function init()
+	  {
+	    context = myCanvas.getContext('2d');
+	    setInterval(draw, 10);
+	    actualImg.src = imglink;
+	    actualImg.onload = function(){
+	    	pattern = context.createPattern(this, "repeat");
+		    context.beginPath();
+		    
+		    context.fillStyle=pattern;
+		    context.arc(100,100,75,0,Math.PI*2,true); context.closePath();
+		    context.fill();
+	    }
+	  }
+
+	function draw()
+	{
+		 context.clearRect(0,0, canvasX,canvasY);
+		 context.beginPath();
+		 context.fillStyle = pattern;
+		 context.arc(x,y,75,0,Math.PI*2,true);
+		 context.closePath();
+		 context.fill();
+		if( x<0 || x>canvasX) dx=-dx; 
+		if( y<0 || y>canvasY) dy=-dy; 
+		x+=dx; 
+		y+=dy;
+	}
+
+
+
+ 
+
+</script>
