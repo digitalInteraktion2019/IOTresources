@@ -24,6 +24,27 @@ Da jeg ikke havde nok til at eksperimentere med den udleverede ESP8266, så valg
 - Html/Css/Javascript
 - Indbygget WinHttpClient bibliotek (WebServer)
 
+### Installation:
+Guide til installation af programmet:
+- Krav:
+1) Windows
+2) Visual Studio 2019 installeret
+
+- Guide: 
+1) Installer filerne ned på computeren
+2) Start Visual Studio 2019
+3) Inkluder curl/curl.h i Webserver.cpp filen
+4) Gå ind på Project -> Linker -> Additional Dependencies og add følgende: 
+libcurl.lib
+Normaliz.lib
+Ws2_32.lib
+Wldap32.lib
+Crypt32.lib
+advapi32.lib
+5) Ændre IP til din egen IPv4 addresse, som du kan finde ved at åbne command prompt og skrive "ipconfig"
+6) Compile og kør programmet
+7) Konsollen ville vise hvilken addresse serveren er startet på, bare kopier det og paste det ind på browseren. 
+
 ### Code Samples
 1) Det her er funktionen som scraper hjemmeside med curl:
 ```c++
