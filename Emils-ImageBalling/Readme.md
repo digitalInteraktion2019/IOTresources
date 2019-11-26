@@ -43,7 +43,7 @@ void ScrapeWebsite() {
 ```
 
 2) Her sorteres dataen:
-```
+``` c++
 std::string get_str_between_two_str(const std::string& s,
 	const std::string& start_delim,
 	const std::string& stop_delim)
@@ -63,7 +63,7 @@ void LookForData() {
 }
 ```
 3) Her bliver dataen lagt ind på titlen af webserveren og derefter bliver sendt til webserveren:
-```
+``` c++
 	cout << "Checking if folder opened successfully" << endl;
 	if (f.good())
 	{
@@ -95,7 +95,7 @@ void LookForData() {
 ```
 
 4) Her bliver dataen benyttet af javascriptet på webserveren og billedet bliver brugt som baggrundsbillede til canvas.
-```
+``` javascript
 	var imglink = "http://www.edoganci.dk/" + document.title;
 	var actualImg = new Image();
 	var pattern;
@@ -128,7 +128,7 @@ void LookForData() {
 	}
 ```
 5) Her er vores main entrypoint til programmet, hvor selve programmet starter op:
-```
+``` c++
 void main()
 {
 	int myPort = 8080;
