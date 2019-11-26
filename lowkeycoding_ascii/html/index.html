@@ -1,0 +1,152 @@
+<HTML>
+    <head>
+        <script>
+            const ascii = () => {
+                var string = document.getElementById('text').value;
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/art?string=' + string + '&charlen=20', true);
+                xhr.onload = function (e) {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log(xhr.responseText);
+                            document.getElementById('result-value').innerText=xhr.responseText;
+                        } else {
+                            console.error(xhr.statusText);
+                        }
+                    }
+                };
+                xhr.onerror = function (e) {
+                    console.log(xhr.statusText);
+                };
+                xhr.send(null); 
+            }
+        </script>
+        <script src='https://kit.fontawesome.com/74596594bf.js' crossorigin='anonymous'></script>
+        <style>
+            body {
+                font-family: 'Montserrat', sans-serif;
+                padding: 0;
+                margin: 0;
+                background-image: linear-gradient(to right, #cb2d3e, #ef473a);
+            }
+            .container {
+                position: relative;
+                top: 50%;
+                text-align: center;
+            }
+            .head {
+                color: white;
+                font-size: 28px;
+                line-height: 40px;
+                text-align: center;
+            }
+            
+            .searchBox {
+                display: inline-block;
+                background: #2f3640;
+                height: 40px;
+                border-radius: 40px;
+                padding: 10px;
+                margin-bottom: 20px;
+            }
+            .searchInput{
+                width:0px;
+            }
+            .result:empty {
+                display: none;
+            }
+            pre {
+                text-align: center;
+                margin: 0 auto;
+                background: #2f3640;
+                border-radius: 40px;
+                padding-left: 20px;
+                padding-right: 20px;
+                color: #00FF00;
+                width: 80%;
+                white-space: pre;
+                text-align : left;
+                margin-bottom: 20px;
+            }
+            pre:empty {
+                display: none;
+            }
+            .searchBox:hover>.searchInput {
+                width: 240px;
+                padding: 0 6px;
+            }
+            
+            .searchBox:hover>.searchButton {
+                background: white;
+                color: #2f3640;
+            }
+            
+            .searchInput:focus {
+                width: 240px;
+                padding: 0 6px;
+            }
+            
+            .searchInput:focus>.searchButton {
+                background: white;
+                color: #2f3640;
+            }
+            
+            .searchButton {
+                color: white;
+                float: right;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #2f3640;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: 0.4s;
+            }
+            
+            .searchInput {
+                border: none;
+                background: none;
+                outline: none;
+                float: left;
+                padding: 0;
+                color: #00FF00;
+                font-size: 16px;
+                transition: 0.4s;
+                line-height: 40px;
+                width: 0px;
+            }
+            
+            @media screen and (max-width: 620px) {
+                .searchBox:hover>.searchInput {
+                    width: 150px;
+                    padding: 0 6px;
+                }
+                .searchInput:focus {
+                    width: 150px;
+                    padding: 0 6px;
+                }
+            }
+        </style>
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+        </style>
+    </head>
+
+    <body>
+        <div class='container'>
+            <div class='head'>
+                <h1>Ascii art generator</h1>
+            </div>
+            <div class='searchBox'>
+                <input class='searchInput' id='text' type='text' name='' placeholder='Input text'>
+                <button class='searchButton' onclick='ascii()'>
+                    <i class='fas fa-long-arrow-alt-right'></i>
+                </button>
+            </div>
+            <div class='result'>
+                <pre id='result-value'></pre>
+            </div>
+        </div>
+    </body>
+</HTML>
