@@ -1,11 +1,9 @@
-#include <LiquidCrystal_I2C.h>
 #include "ESP8266WiFi.h"
 WiFiClient client;
 #include <Wire.h>
 #include <rgb_lcd.h>
-#include "rgb_lcd.h"
 
-
+//Set constants
 const int ledPin = D4;
 
 unsigned long goalMillis = 30000;
@@ -20,6 +18,7 @@ const int colorR = 30;
 const int colorG = 30;
 const int colorB = 200;
 
+
 rgb_lcd lcd;
 
 
@@ -29,13 +28,9 @@ void setup() {
 
   lcd.begin(16, 2);
   lcd.setRGB(colorR, colorG, colorB);
-  lcd.print("Iz working");
-
 }
 
 void loop() {
-
-
   int n = scan();
   Serial.println(n);
 
@@ -47,7 +42,6 @@ void loop() {
     currentMillis = millis() - saved_time;
 
     if (currentMillis >= goalMillis) {
-      Serial.println("Got this far cheif");
       saved_time = millis();
       break;
     }
@@ -69,9 +63,6 @@ void loop() {
       // set the LED with the ledState of the variable:
       digitalWrite(ledPin, ledState);
 
-
-
-
     }
   }
 }
@@ -79,13 +70,19 @@ void loop() {
 int scan() {
   Serial.println("");
   Serial.println("[*]Scan start");
+  delay(1500);
+  lcd.clear();
+  lcd.print("[*]Starting scan");
   WiFi.disconnect();
   delay(100);
   // WiFi.scanNetworks will return the number of networks found
   int n = WiFi.scanNetworks();
-  if (n == 0)
+  if (n == 0){
     Serial.println("[*] No networks found");
-  else
+  lcd.clear();
+  lcd.print("[*]No networks found");
+  delay(1500);
+}else
   {
     for (int i = 0; i < n; ++i)
     {
@@ -97,10 +94,16 @@ int scan() {
     }
   }
   Serial.println("[*] Scan done");
+  lcd.clear();
+  lcd.print("[*]Scan finished");
+  delay(1500);
+  lcd.clear();
   Serial.print("[*] Numbers of networks: **");
   Serial.print(n);
   Serial.print("**\n");
   lcd.clear();
+  lcd.print("Nr. of networks:");
+  lcd.setCursor(0, 1);
   lcd.print(n);
   return n;
 }
@@ -122,6 +125,6 @@ String encryptionTypeStr(uint8_t authmode) {
   }
 }
 /*Code lend from:
- * https://blog.robberg.net/category/arduino/
- * https://www.arduino.cc/en/Tutorial/BlinkWithoutDelay
- */
+   https://blog.robberg.net/category/arduino/
+   https://www.arduino.cc/en/Tutorial/BlinkWithoutDelay
+*/
