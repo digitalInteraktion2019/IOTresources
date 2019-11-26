@@ -11,6 +11,7 @@
 #include <Wire.h>
 #include "rgb_lcd.h"
 
+
 rgb_lcd lcd;
 
 int colorR = 0;
@@ -34,12 +35,12 @@ const int httpsPort = 443; //80
 
 
 //NEMLIG
-const char* host = "www.nemlig.com";
-String url = "/loeg-zittauer-2301096";
+const char* host1 = "www.nemlig.com";
+String url1 = "/loeg-zittauer-2301096";
 
 // Use web browser to view and copy
 // SHA1 fingerprint of the certificate
-const char fingerprint[] PROGMEM = "666101f91494587d521734df02bae89e5ecd37d3";
+const char fingerprint1[] PROGMEM = "666101f91494587d521734df02bae89e5ecd37d3";
 //NEMLIG
 
 
@@ -50,15 +51,23 @@ String url2 = "/frugt-og-groent/groentsager/loeg-og-porrer/danske-loeg-p-5700380
 // Use web browser to view and copy
 // SHA1 fingerprint of the certificate
 const char fingerprint2[] PROGMEM = "a9716f5657a175381ecca3770bf9f30493eac1dc";
+
+  float Coopcurrent = 8;
 //COOP
 
 //Huskeliste
-const char* hosthusk = "script.google.com";
+const char* host = "script.google.com";
   WiFiClientSecure client;
+  String readString;
 // Use web browser to view and copy
 // SHA1 fingerprint of the certificate
-const char* fingerprinthusk = "96383360d46b84c932674944f227d87c331a355a";
+const char* fingerprint = "96383360d46b84c932674944f227d87c331a355a";
 String GAS_ID = "AKfycbyaa7QwORUgl1aY7vPPNU7NCeVa2ML4qR5w6kP0OYuCWp3iS74";   // Replace by your GAS service id 
+
+
+  String string_item = "-";
+  String string_place =  "-"; 
+  String string_price =  "kr"; 
 //Huskeliste
 
 
@@ -80,6 +89,7 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
+  
   Serial.println("");
   Serial.println("WiFi connected");
   lcd.clear();
@@ -92,25 +102,25 @@ void setup() {
 
 int value = 0;
 
-void loop() {
-  WiFiClientSecure client;
+void loop() {  
+  BearSSL::WiFiClientSecure client;
   delay(5000); //run every 5 seconds
   int linecounter=0;
   String NemligString1;
   String NemligString2;
   float Nemligprice;
-  String line="";
+  String line1="";
   ++value;
 
   Serial.print("connecting to ");
-  Serial.println(host);
+  Serial.println(host1);
 
   //Using fingerprint to get HTTPS certificate
-Serial.printf("Using fingerprint '%s'\n", fingerprint);
-client.setFingerprint(fingerprint);
+Serial.printf("Using fingerprint '%s'\n", fingerprint1);
+client.setFingerprint(fingerprint1);
 
   // Use WiFiClient class to create TCP connections
-  if (!client.connect(host, httpsPort)) {
+  if (!client.connect(host1, httpsPort)) {
     Serial.println("connection failed");
 
     lcd.clear();
@@ -129,11 +139,11 @@ colorB = 0;
   // We now create a URI for the request
 
   Serial.print("Requesting URL: ");
-  Serial.println(url);
+  Serial.println(url1);
 
   // This will send the request to the server
-  client.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" +
+  client.print(String("GET ") + url1 + " HTTP/1.1\r\n" +
+               "Host: " + host1 + "\r\n" +
                "User-Agent: chrome/7.55.1\r\n" +
                "Accept: */*\r\n\r\n");
                //"Connection: close\r\n\r\n");
@@ -143,19 +153,19 @@ colorB = 0;
   // Read all the lines of the reply from server
   while(client.available()){
     yield();
-    line = client.readStringUntil('\r'); //cariage return as delimiter
+    line1 = client.readStringUntil('\r'); //cariage return as delimiter
     yield();
-    //Serial.println(line);
+    //Serial.println(line1);
     yield();
     linecounter++;
     yield();
     //Serial.println(linecounter);
     if(linecounter==284) {
-      NemligString1=line.substring(2022,2023);  //magic numbers galore :P
-      NemligString2=line.substring(2024,2026);
+   NemligString1=line1.substring(2022,2023);  //magic numbers galore :P
+   NemligString2=line1.substring(2024,2026);
     }  
   }
-  if(line!="") //if data exists
+  if(line1!="") //if data exists
   {
   Nemligprice=(NemligString1.toFloat()+(NemligString2.toFloat()/100)); //parse the string as a float.
   //Serial.println("String1: " +  String(NemligString1)); //test report
@@ -213,7 +223,7 @@ client.setFingerprint(fingerprint2);
                "Accept: */*\r\n\r\n");
                //"Connection: close\r\n\r\n");
   
-  delay(10000); //wait a while to let the server respond (increase on shitty connections)
+  delay(8000); //wait a while to let the server respond (increase on shitty connections)
 
   // Read all the lines of the reply from server
   while(client.available()){
@@ -241,8 +251,6 @@ client.setFingerprint(fingerprint2);
   
   Serial.println();
   Serial.println("closing connection");
-
-  float Coopcurrent = 8;
   
   Serial.println("FIRST");
   Serial.println(String(Coopprice));
@@ -251,7 +259,6 @@ client.setFingerprint(fingerprint2);
 float zero = 0;
 if (Coopprice != zero) {
   Coopcurrent = Coopprice;
-  Serial.println(String(Coopcurrent));
 }
 Serial.println(String(Coopcurrent));
 
@@ -269,6 +276,10 @@ lcd.clear();
   lcd.setCursor(0,1);
   lcd.print("Coop: " + String(Coopcurrent) + " kr"); 
 
+string_item = "Løg";
+string_place =  "Coop"; 
+string_price =  String(Coopcurrent)+" kr" ;
+
 } else if (Coopcurrent <= zero) {
   lcd.clear();
   lcd.setRGB(colorR, colorG, colorB);
@@ -276,6 +287,10 @@ lcd.clear();
   lcd.print("Loeg");
   lcd.setCursor(0,1);
   lcd.print("Nemlig: " + String(Nemligprice) + " kr"); 
+  
+string_item = "Løg";
+string_place =  "Nemlig"; 
+string_price =  String(Nemligprice)+" kr" ;
 } else if (Nemligprice < Coopcurrent) {
   lcd.clear();
   lcd.setRGB(colorR, colorG, colorB);
@@ -283,6 +298,12 @@ lcd.clear();
   lcd.print("Loeg");
   lcd.setCursor(0,1);
   lcd.print("Nemlig: " + String(Nemligprice) + " kr"); 
+
+string_item = "Løg";
+string_place =  "Nemlig"; 
+string_price =  String(Nemligprice)+" kr" ;
+
+  
 } else if (Coopcurrent < Nemligprice) {
   lcd.clear();
   lcd.setRGB(colorR, colorG, colorB);
@@ -290,6 +311,11 @@ lcd.clear();
   lcd.print("Loeg");
   lcd.setCursor(0,1);
   lcd.print("Coop: " + String(Coopcurrent) + " kr"); 
+
+string_item = "Løg";
+string_place =  "Coop"; 
+string_price =  String(Coopcurrent)+" kr" ;
+  
 } else {
   lcd.clear();
   lcd.setRGB(colorR, colorG, colorB);
@@ -302,33 +328,53 @@ lcd.clear();
   Serial.println(String(zero));
 }
 
-//Calculting cheapest
-/*
-if (Nemligprice > Coopprice) {
-  String string_item = "Løg";
-  String string_place =  "Nemlig"; 
-  String string_price =  String(Nemligprice)+" kr" ;
-
-}
-
-if (Nemligprice < Coopprice) {
-  String string_item = "Løg";
-  String string_place =  "Coop"; 
-  String string_price =  String(Coopprice)+" kr" ;
-
-}
-
-*/
-//Calculating cheapest
-
-  //
-
-
-
 
 // HUSKELISTE
+Serial.print("connecting to ");
+  Serial.println(host);
 
+Serial.printf("Using fingerprint '%s'\n", fingerprint);
+client.setFingerprint(fingerprint);
+  
+  if (!client.connect(host, httpsPort)) {
+    Serial.println("connection failed");
+    return;
+  }
+String string_item = "Løg";
+String string_place =  "Coop"; 
+String string_price =  String(Coopcurrent)+" kr" ;
+  String url = "/macros/s/" + GAS_ID + "/exec?item=" + string_item + "&place=" + string_place + "&price=" + string_price;
+  Serial.print("requesting url: ");
+  Serial.println(url);
 
+  client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+         "host: " + host + "\r\n" +
+         "User-Agent: curl/7.55.1\r\n" +
+         "Accept */*\r\n" +
+         "Connection: close\r\n\r\n");
+         
+delay(5000);
 
-  //
+  Serial.println("request sent");
+  while (client.connected()) {
+  String line = client.readStringUntil('\n');
+  yield();
+  if (line == "\r") {
+    Serial.println("headers received");
+    break;
+
+  String line = client.readStringUntil('\n');
+  if (line.startsWith("{\"state\":\"success\"")) {
+  Serial.println("esp8266/Arduino CI successfull!");
+  } else {
+  Serial.println("esp8266/Arduino CI has failed");
+  }
+  Serial.println("reply was:");
+  Serial.println("==========");
+  Serial.println(line);
+  Serial.println("==========");
+  Serial.println("closing connection");
 }
+  }
+}
+
