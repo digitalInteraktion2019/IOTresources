@@ -66,7 +66,9 @@ void setup() {
 
  lcd.begin(16, 2);
   lcd.setRGB(colorR, colorG, colorB);
-    lcd.print("Hello nigga");
+    lcd.print("MSF Bot");
+    lcd.setCursor(0,1);
+    lcd.print("Booting...");
 
 //Real code  
   Serial.begin(115200);
@@ -245,7 +247,8 @@ client.setFingerprint(fingerprint2);
   Serial.println("FIRST");
   Serial.println(String(Coopprice));
   Serial.println(String(Nemligprice));
-  Serial.println("FIRST");
+  Serial.println(" ");
+  Serial.println("SECOND");
 float zero = 0;
 if (Coopprice != zero) {
   Coopcurrent = Coopprice;
@@ -260,7 +263,7 @@ Serial.println(String(Nemligcurrent));
 colorR = 0;
 colorG = 0;
 colorB = 255;
-if (Nemligcurrent <= zero) {
+if (Nemligcurrent <= zero && Coopcurrent > zero) {
 lcd.clear();
   lcd.clear();
   lcd.setRGB(colorR, colorG, colorB);
@@ -269,7 +272,7 @@ lcd.clear();
   lcd.setCursor(0,1);
   lcd.print("Coop: " + String(Coopcurrent) + " kr"); 
 
-} else if (Coopcurrent <= zero) {
+} else if (Coopcurrent <= zero && Nemligcurrent > zero){
   lcd.clear();
   lcd.setRGB(colorR, colorG, colorB);
   lcd.setCursor(0,0);
@@ -277,7 +280,7 @@ lcd.clear();
   lcd.setCursor(0,1);
   lcd.print("Nemlig: " + String(Nemligcurrent) + " kr"); 
   
-} else if (Nemligcurrent < Coopcurrent) {
+} else if (Nemligcurrent <= Coopcurrent) {
   lcd.clear();
   lcd.setRGB(colorR, colorG, colorB);
   lcd.setCursor(0,0);
