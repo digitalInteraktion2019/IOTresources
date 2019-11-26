@@ -1,0 +1,4 @@
+# Weather forecast
+
+Vi har lavet en weatherforecaster, som fortæller om det regner eller ej (i teorien)
+Vi hiver data fra openweathermap.org
