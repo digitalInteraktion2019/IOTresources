@@ -1,6 +1,6 @@
 ##Emils-ImageBalling
 
-### Features
+### Idé:
 
 - Scraper en hjemmeside (https://www.edoganci.dk).
 - Finder noget specifikt (I det her tilfælde billedet på forsiden af hjemmesiden).
@@ -8,23 +8,25 @@
 - Webserverens javascript lægger billedet i baggrunden af en canvas.
 - Bolden bevæger i canvas og viser et udsnit af billedet.
 
-### Description
-Jeg har både lavet en PC version der kører webserveren og udføre præcist samme opgave og derudover har jeg også implementeret det til Arduino IDE og udført opgaven med esp8266 enheden der blev udleveret. 
+### Description:
+Jeg har både lavet en PC version der kører webserveren og udføre præcist samme opgave og derudover har jeg også implementeret det til Arduino IDE og udført opgaven med esp8266 enheden der blev udleveret.
 
-### Demonstration
+Nederst på siden er der udsnit af de vigtigste funktioner af kodet og en lille forklaring til hvert udsnit. 
+
+### Demonstration:
 - Resultat:
 
 ![](https://github.com/digitalInteraktion2019/IOTresources/blob/master/Emils-ImageBalling/Ressourcer/Demo.gif)
 
 
-### Utilities - PC Version
+### Utilities - PC Version:
 - Visual Studio 2019
 - Curl (https://curl.haxx.se/)
 - Frontend (https://freefrontend.com/)
 	- Html/Css/Javascript
 - Indbygget WinHttpClient bibliotek (WebServer)
 
-### Utilities - ESP8266 Version
+### Utilities - ESP8266 Version:
 - Arduino IDE v2
 - string, iostream, ESP8266WebServer, ESP8266HTTPClient, ESP8266Wifi libraries
 - Frontend ((https://freefrontend.com/))
