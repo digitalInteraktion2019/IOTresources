@@ -1,15 +1,15 @@
-#Emils-ImageBalling
+##Emils-ImageBalling
 
 ### Features
 
 - Scraper en hjemmeside (https://www.edoganci.dk).
 - Finder noget specifikt (I det her tilfælde billedet på forsiden af hjemmesiden).
 - Erstatter webserverens tittel med linket til billedet.
-- Hjemmesidens javascript lægger billedet i baggrunden af en canvas.
+- Webserverens javascript lægger billedet i baggrunden af en canvas.
 - Bolden bevæger i canvas og viser et udsnit af billedet.
 
 ### Description
-Da jeg ikke havde nok til at eksperimentere med den udleverede ESP8266, så valgte jeg istedet at lave en webserver på computeren og udføre opgaven på præcist samme måde, bare uden en ESP8266. Princippet gælder dog stadig for ESP8266 og mit arbejde kan sagtens implementeres til enheden. 
+Jeg har både lavet en PC version der kører webserveren og udføre præcist samme opgave og derudover har jeg også implementeret det til Arduino IDE og udført opgaven med esp8266 enheden der blev udleveret. 
 
 ### Demonstration
 - Resultat:
@@ -17,14 +17,20 @@ Da jeg ikke havde nok til at eksperimentere med den udleverede ESP8266, så valg
 ![](https://github.com/digitalInteraktion2019/IOTresources/blob/master/Emils-ImageBalling/Ressourcer/Demo.gif)
 
 
-### Utilities
+### Utilities - PC Version
 - Visual Studio 2019
 - Curl (https://curl.haxx.se/)
 - Frontend (https://freefrontend.com/)
-- Html/Css/Javascript
+	- Html/Css/Javascript
 - Indbygget WinHttpClient bibliotek (WebServer)
 
-### Installation:
+### Utilities - ESP8266 Version
+- Arduino IDE v2
+- string, iostream, ESP8266WebServer, ESP8266HTTPClient, ESP8266Wifi libraries
+- Frontend ((https://freefrontend.com/))
+	- Html/Css/Javascript
+
+### Installation of PC Version:
 Guide til installation af programmet:
 - Krav:
 1) Windows
@@ -45,74 +51,49 @@ advapi32.lib
 6) Compile og kør programmet
 7) Konsollen ville vise hvilken addresse serveren er startet på, bare kopier det og paste det ind på browseren. 
 
-### Code Samples
+### Code Samples for Arduino IDE
 1) Det her er funktionen som scraper hjemmeside med curl:
 ```c++
-void ScrapeWebsite() {
-	CURL* curl = nullptr;
-	curl_global_init(CURL_GLOBAL_ALL);
-	curl = curl_easy_init();
-	if (curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, "http://www.edoganci.dk/");
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &contents);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-		CURLcode code = curl_easy_perform(curl);
-		curl_easy_cleanup(curl);
-	}
-	curl_global_cleanup();
+void scrapeWebsite(){
+  Serial.println("Scraping website " + website);
+  http.begin(website);
+  int httpCode = http.GET();
+  if (httpCode > 0){
+      Serial.println("Assigning variable with scraped data:");
+      webPage = http.getString();
+    }
+  //Serial.println(webPage);
 }
 ```
 
 2) Her sorteres dataen:
 ``` c++
-std::string get_str_between_two_str(const std::string& s,
-	const std::string& start_delim,
-	const std::string& stop_delim)
-{
-	unsigned first_delim_pos = s.find(start_delim);
-	unsigned end_pos_of_first_delim = first_delim_pos + start_delim.length();
-	unsigned last_delim_pos = s.find(stop_delim);
+String get_my_string(String startDelim, String stopDelim, String myString){
+  int firstChar = myString.indexOf(startDelim) + startDelim.length();
+  int secondChar = myString.indexOf(stopDelim);
 
-	return s.substr(end_pos_of_first_delim,
-		last_delim_pos - end_pos_of_first_delim);
+  return myString.substring(firstChar, secondChar);
 }
 
-void LookForData() {
-	std::string startDelim = "<img src=\"";
-	std::string stopDelim = "\" class=";
-	token = get_str_between_two_str(contents, startDelim, stopDelim);
+void filterData(){
+  token = get_my_string("<img src=\"", "\" class=", webPage);
+  actualToken = "<title>" + token + " </title>";
+  Serial.println("token: " + token);
+  Serial.println("actual token" + actualToken);
 }
 ```
 3) Her bliver dataen lagt ind på titlen af webserveren og derefter bliver sendt til webserveren:
 ``` c++
-	cout << "Checking if folder opened successfully" << endl;
-	if (f.good())
-	{
-		cout << "Folder opened successfully\n" << endl;
-		std::string str((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-		std::string sendData = "<title>" + token + " </title>";
-		webPage = sendData + str;
-		cout << "Grabbed all contents including:\n==========================================================\n" 
-			<< webPage << "\n==========================================================\n" << endl;
-		errorCode = 200;
-	}
+void filterData(){
+  token = get_my_string("<img src=\"", "\" class=", webPage);
+  actualToken = "<title>" + token + " </title>";
+  Serial.println("token: " + token);
+  Serial.println("actual token" + actualToken);
+}
 
-	f.close();
-
-	cout << "Sending index.html to client" << endl;
-	std::ostringstream oss;
-	oss << "HTTP/1.1 " << errorCode << " OK\r\n";
-	oss << "Cache-Control: no-cache, private\r\n";
-	oss << "Content-Type: text/html\r\n";
-	oss << "Content-Length: " << webPage.size() << "\r\n";
-	oss << "\r\n";
-	oss << webPage;
-	cout << "Sent the index.html to client" << endl;
-
-	std::string output = oss.str();
-	int size = output.size() + 1;
-
-	sendToClient(clientSocket, output.c_str(), size);
+void createWebServer(){
+  webServer.send(200, "text/html", actualToken + html);
+}
 ```
 
 4) Her bliver dataen benyttet af javascriptet på webserveren og billedet bliver brugt som baggrundsbillede til canvas.
@@ -147,22 +128,4 @@ void LookForData() {
 		x+=dx; 
 		y+=dy;
 	}
-```
-5) Her er vores main entrypoint til programmet, hvor selve programmet starter op:
-``` c++
-void main()
-{
-	int myPort = 8080;
-	const char* myActualIP = "192.168.1.227";
-
-	WebServer webServer(myActualIP, myPort);
-	std::cout << "Server started on: " << myActualIP << ":" << myPort << std::endl;
-
-	if (webServer.init() != 0)
-		return;
-
-	webServer.run();
-
-	system("pause");
-}
 ```
