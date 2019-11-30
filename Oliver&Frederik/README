@@ -1,4 +1,18 @@
 Weather forecast
 
 Vi har lavet en weatherforecaster, som fortæller om det regner eller ej (i teorien)
-Vi hiver data fra openweathermap.org
+
+Ide-pitch:
+Vi statede egentlig med at ville lave et system med en pære der lyste, hvis der var et steam salde igang, men det kunne viikke rigtig gennemskue hvordan man gjorde.
+Derfor fandt vi openweathermap.org og ville lave en weather forecaster.
+Det skulle virke sådan at vi havde to pærer; en lyser hvis det regner, en anden lyser hvis der er solskin.
+
+Web ressources:
+Vi henter data fra openweathermap.org hvor vi fandt en eksempelkode. Vi er ikke sikre på præcis hvorfra den får dataene, men det skulle gerne fungere.
+Som sagt har vi koblet det op sådan at vi har to LED-pærer koblet til. Det der sker er, at koden går ind og læser vejret.
+Hvis vejret så er Rain, lyser den ene pære. Hvis vejret derimod er Clear, så lyser den anden.
+
+
+På trods af at vi har fået løst alle de fejl der var med libraries m.m. har vi endnu ikke fået det til at virke som det skulle.
+Vi har fået den til at uploade koden succesfuldt, hvor den så skriver Leaving... Hard reseting via RTS pin...
+Ifølge google er det rigtigt nok, men vi har ikke kunnet få det til at fungere :/
