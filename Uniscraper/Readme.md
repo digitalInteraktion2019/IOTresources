@@ -52,4 +52,4 @@ while (client.connected()) {
 ```
 
 #### Data Eksempel:
-![](https://github.com/digitalInteraktion2019/IOTresources/blob/master/DanielMathiasSamuel_Uniscraper/Ressourcer/DataEksempel.png)
+![](https://github.com/digitalInteraktion2019/IOTresources/blob/master/Uniscraper/Ressourcer/DataEksempel.PNG)
