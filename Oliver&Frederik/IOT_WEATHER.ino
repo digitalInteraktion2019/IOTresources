@@ -4,8 +4,8 @@
 #include <WiFiClient.h>
 
 // Replace with your SSID and password details
-char ssid[] = "Frederiks iPhone";        
-char pass[] = "password";   
+char ssid[] = "IOT";        
+char pass[] = "DigitalInteraktion";   
 
 WiFiClient client;
 
@@ -13,7 +13,7 @@ WiFiClient client;
 const char server[] = "api.openweathermap.org";
 
 // Replace the next line to match your city and 2 letter country code
-String nameOfCity = "Aarhus,DK"; 
+String nameOfCity = "aarhus,dk"; 
 // How your nameOfCity variable would look like for Lagos on Nigeria
 //String nameOfCity = "Lagos,NG"; 
 
@@ -26,8 +26,8 @@ int jsonend = 0;
 boolean startJson = false;
 int status = WL_IDLE_STATUS;
 
-int rainLed = 1;  // Indicates rain
-int clearLed = 2; // Indicates clear sky or sunny
+int rainLed = D1;  // Indicates rain
+int clearLed = D4; // Indicates clear sky or sunny
 
 
 #define JSON_BUFF_DIMENSION 2500
@@ -38,6 +38,9 @@ const unsigned long postInterval = 10 * 60 * 1000;  // posting interval of 10 mi
 void setup() {
   pinMode(clearLed, OUTPUT);
   pinMode(rainLed, OUTPUT);
+
+  digitalWrite(clearLed,LOW);
+  digitalWrite(rainLed,LOW);
 
   Serial.begin(9600);
   
@@ -51,6 +54,8 @@ void setup() {
   }
   Serial.println("WiFi Connected");
   printWiFiStatus();
+
+  
 }
 
 void loop() { 
@@ -81,32 +86,40 @@ void printWiFiStatus() {
   Serial.println(" dBm");
 }
 
+//api.openweathermap.org/data/2.5/forecast?q=lagos,ng&APPID=51d33dfc28442977a0c2bbbf9f71f6a3&mode=json&units=metric&cnt=2
 // to request data from OWM
 void makehttpRequest() {
   // close any connection before send a new request to allow client make connection to server
   client.stop();
-
+Serial.println("wakeup..");
   // if there's a successful connection:
   if (client.connect(server, 80)) {
-    // Serial.println("connecting...");
+     Serial.println("connecting...");
     // send the HTTP PUT request:
     client.println("GET /data/2.5/forecast?q=" + nameOfCity + "&APPID=" + apiKey + "&mode=json&units=metric&cnt=2 HTTP/1.1");
     client.println("Host: api.openweathermap.org");
-    client.println("User-Agent: ArduinoWiFi/1.1");
-    client.println("Connection: close");
+   // client.println("User-Agent: ArduinoWiFi/1.1");
+   // client.println("Connection: close");
     client.println();
+    
+Serial.println("made request, waiting for response");
     
     unsigned long timeout = millis();
     while (client.available() == 0) {
+      yield();
       if (millis() - timeout > 5000) {
         Serial.println(">>> Client Timeout !");
         client.stop();
         return;
       }
     }
+
+Serial.println("got response!");
+ 
     
     char c = 0;
     while (client.available()) {
+      yield();
       c = client.read();
       // since json contains equal number of open and close curly brackets, this means we can determine when a json is completely received  by counting
       // the open and close occurences,
@@ -138,6 +151,7 @@ void makehttpRequest() {
 
 //to parse json data recieved from OWM
 void parseJson(const char * jsonString) {
+  Serial.println("parsing data");
   //StaticJsonBuffer<4000> jsonBuffer;
   const size_t bufferSize = 2*JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(2) + 4*JSON_OBJECT_SIZE(1) + 3*JSON_OBJECT_SIZE(2) + 3*JSON_OBJECT_SIZE(4) + JSON_OBJECT_SIZE(5) + 2*JSON_OBJECT_SIZE(7) + 2*JSON_OBJECT_SIZE(8) + 720;
   DynamicJsonBuffer jsonBuffer(bufferSize);
@@ -165,34 +179,22 @@ void parseJson(const char * jsonString) {
   float humidityLater = later["main"]["humidity"];
   String weatherLater = later["weather"][0]["description"];
 
+  if(weatherNow.indexOf("rain") > 0){
+    Serial.println("It is raining!");
+    digitalWrite(rainLed,HIGH);
+    digitalWrite(clearLed,LOW);
+    }
+  else{
+    Serial.println("It is dry!");
+    digitalWrite(rainLed,LOW);
+    digitalWrite(clearLed,HIGH);
+     
+  }
   // checking for four main weather possibilities
-  diffDataAction(weatherNow, weatherLater, "clear");
-  diffDataAction(weatherNow, weatherLater, "rain");
+//  diffDataAction(weatherNow, weatherLater, "clear");
+  //diffDataAction(weatherNow, weatherLater, "rain");
   
+  Serial.print("Temperature now: "); Serial.print(tempNow); Serial.println(" C"); 
+  Serial.print("Humidity now: "); Serial.print(humidityNow); Serial.println(" rh");
   Serial.println();
-}
-
-//representing the data
-void diffDataAction(String nowT, String later, String weatherType) {
-  int indexNow = nowT.indexOf(weatherType);
-  int indexLater = later.indexOf(weatherType);
-  // if weather type = rain, if the current weather does not contain the weather type and the later message does, send notification
-  if (weatherType == "rain" or "light rain") { 
-    if (indexNow == -1 && indexLater != -1) {
-      digitalWrite(rainLed,HIGH);
-      digitalWrite(clearLed,LOW);
-
-      Serial.println("Oh no! It is going to " + weatherType + " later! Predicted " + later);
-    }
-  }
- 
-  // for clear sky, if the current weather does not contain the word clear and the later message does, send notification that it will be sunny later
-  else {
-    if (indexNow == -1 && indexLater != -1) {
-      Serial.println("It is going to be sunny later! Predicted " + later);
-      digitalWrite(clearLed,HIGH);
-      digitalWrite(rainLed,LOW);
-
-    }
-  }
 }
