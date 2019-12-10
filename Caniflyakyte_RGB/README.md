@@ -11,3 +11,15 @@ Når man kalder adressen, tjekker den vindhastigheden og svarer med et ja eller 
 
 RGB!!!
 Ja vi bruger RGB fordi det er sejt.
+
+
+
+
+
+
+
+
+
+
+
+Og ja det var meningen der skulle stå dingEdutten.. men jeg lavede en tastefejl. Just in case
